@@ -3,16 +3,16 @@ resource "aws_eks_node_group" "core" {
   node_group_name = "core"
   node_role_arn   = aws_iam_role.core_node_role.arn
   subnet_ids      = var.private_subnets
-  instance_types  = ["t3.micro"]
+  instance_types  = [var.instance_type]
 
 
   ami_type = "BOTTLEROCKET_x86_64"
 
 
   scaling_config {
-    desired_size = 2
-    min_size     = 1
-    max_size     = 3
+    desired_size = var.desired_size
+    min_size     = var.min_size
+    max_size     = var.max_size
   }
 
 

@@ -1,5 +1,10 @@
-# Create IAM role for Karpenter controller
-data "aws_iam_policy_document" "karpenter_assume_role" {
+resource "aws_iam_role" "karpenter_controller" {
+  name               = "karpenter-controller-${var.cluster_name}"
+  assume_role_policy = data.aws_iam_policy_document.karpenter_assume.json
+}
+
+
+data "aws_iam_policy_document" "karpenter_assume" {
   statement {
     actions = ["sts:AssumeRole"]
     principals {
@@ -7,12 +12,6 @@ data "aws_iam_policy_document" "karpenter_assume_role" {
       identifiers = ["ec2.amazonaws.com"]
     }
   }
-}
-
-
-resource "aws_iam_role" "karpenter_controller" {
-  name               = "karpenter-controller-${var.cluster_name}"
-  assume_role_policy = data.aws_iam_policy_document.karpenter_assume_role.json
 }
 
 
@@ -45,15 +44,14 @@ resource "aws_iam_policy" "karpenter_policy" {
 }
 
 
-resource "aws_iam_role_policy_attachment" "karpenter_policy_attach" {
-  role       = aws_iam_role.karpenter_controller.name
-  policy_arn = aws_iam_policy.karpenter_policy.arn
-}
-
+# resource "aws_iam_role_policy_attachment" "karpenter_attach" {
+#   role       = aws_iam_role.karpenter_controller.name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+# }
 
 # Create IAM OIDC Provider for IRSA
 resource "aws_iam_openid_connect_provider" "oidc" {
-  url            = module.eks.cluster_oidc_issuer_url
+  url            = var.cluster_oidc_issuer_url
   client_id_list = ["sts.amazonaws.com"]
   # thumbprint_list = [module.eks.cluster_oidc_provider_thumbprint]
 }
