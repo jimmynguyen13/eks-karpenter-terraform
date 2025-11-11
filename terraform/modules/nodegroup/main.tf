@@ -16,7 +16,10 @@ resource "aws_eks_node_group" "core" {
   }
 
 
-  labels = { Role = "core" }
+  labels = {
+    Role                      = "core"
+    "karpenter.sh/controller" = "true"
+  }
 }
 
 # Role for core nodegroup
