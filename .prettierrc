@@ -1,0 +1,18 @@
+{
+  "tabWidth": 2,
+  "useTabs": false,
+  "singleQuote": false,
+  "trailingComma": "none",
+  "printWidth": 80,
+  "proseWrap": "preserve",
+  "overrides": [
+    {
+      "files": ["*.yaml", "*.yml"],
+      "options": {
+        "tabWidth": 2,
+        "singleQuote": false,
+        "trailingComma": "none"
+      }
+    }
+  ]
+}

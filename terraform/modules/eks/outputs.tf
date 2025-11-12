@@ -18,17 +18,17 @@ output "cluster_certificate_authority_data" {
   value       = module.eks.cluster_certificate_authority_data
 }
 
+output "cluster_oidc_provider_arn" {
+  value       = module.eks.oidc_provider_arn
+  description = "EKS cluster OIDC provider ARN"
+}
+
 # output "cluster_oidc_provider_thumbprint" {
 #   value       = module.eks.cluster_oidc_provider_thumbprint
 #   description = "EKS cluster OIDC provider thumbprint"
 # }
 
-# output "cluster_oidc_provider_arn" {
-#   value       = module.eks.cluster_oidc_provider_arn
-#   description = "EKS cluster OIDC provider ARN"
-# }
-
-# output "cluster_oidc_provider_id" {
-#   value       = module.eks.cluster_oidc_provider_id
-#   description = "EKS cluster OIDC provider ID"
-# }
+output "cluster_oidc_provider_id" {
+  value       = module.eks.oidc_provider
+  description = "EKS cluster OIDC provider ID"
+}

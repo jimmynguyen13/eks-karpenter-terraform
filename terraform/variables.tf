@@ -18,6 +18,11 @@ variable "k8s_version" {
   default     = "1.33"
 }
 
+variable "karpenter_version" {
+  description = "Karpenter version"
+  type        = string
+  default     = "0.35.0"
+}
 
 variable "tf_state_bucket" {
   description = "S3 bucket for terraform state (optional)"

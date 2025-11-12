@@ -2,7 +2,7 @@
 
 This documentation describes the directory structure and provides step-by-step instructions for using Terraform to manage EKS infrastructure with Karpenter.
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 terraform/
@@ -27,14 +27,14 @@ terraform/
 │   │   ├── main.tf
 │   │   ├── variables.tf
 │   │   └── outputs.tf
-│   └── iam-karpenter/      # Module for creating IAM roles and policies for Karpenter
+│   └── karpenter/          # Module for creating Karpenter
 │       ├── main.tf
 │       ├── variables.tf
 │       └── outputs.tf
-└── README.md               # This documentation
+└── README.md
 ```
 
-## 🏗️ Module Descriptions
+## Module Descriptions
 
 ### 1. **VPC Module** (`modules/vpc/`)
 
@@ -55,13 +55,13 @@ terraform/
 - Uses Bottlerocket AMI
 - Creates IAM role for worker nodes
 
-### 4. **IAM Karpenter Module** (`modules/iam-karpenter/`)
+### 4. **Karpenter Module** (`modules/karpenter/`)
 
 - Creates IAM role for Karpenter controller
 - Configures OIDC provider for EKS
 - Assigns necessary policies for Karpenter
 
-## 🚀 Usage Guide
+## Usage Guide
 
 ### Prerequisites
 
@@ -78,9 +78,9 @@ terraform/
 aws sts get-caller-identity
 ```
 
-#### 1.2. Configure Environment Variables (if needed)
+#### 1.2. Configure Environment Variables
 
-Edit the `terraform.tfvars` file according to your needs:
+Edit the `terraform.tfvars` file:
 
 ```hcl
 aws_region      = "us-east-1"
@@ -127,14 +127,12 @@ terraform validate
 Success! The configuration is valid.
 ```
 
-If there are errors, fix the configuration files and run `terraform validate` again.
-
 ### Step 4: Format Code (Optional)
 
 Format code for consistency:
 
 ```bash
-terraform fmt
+terraform fmt -recursive
 ```
 
 ### Step 5: Plan - Preview Changes
@@ -165,23 +163,13 @@ Or if you saved the plan:
 terraform apply tfplan
 ```
 
-**Execution process**:
-
-1. Terraform will ask for confirmation: `Do you want to perform these actions?` → Type `yes`
-2. Terraform will create resources in order:
-   - VPC and networking (approximately 2-3 minutes)
-   - EKS cluster (approximately 10-15 minutes)
-   - IAM roles and policies
-   - Node group (approximately 5-10 minutes)
-3. Total time: **approximately 15-20 minutes**
-
 **Expected result**:
 
 ```
 Apply complete! Resources: X added, 0 changed, 0 destroyed.
 ```
 
-#### 6.1. Apply with auto-approve (no confirmation prompt)
+#### 6.1. Apply with auto-approve
 
 ```bash
 terraform apply -auto-approve
@@ -233,47 +221,8 @@ terraform plan -destroy
 terraform destroy
 ```
 
-Terraform will ask for confirmation: `Do you want to destroy all Terraform-managed infrastructure?` → Type `yes`
-
 #### 8.3. Destroy with auto-approve
 
 ```bash
 terraform destroy -auto-approve
 ```
-
-## 📝 Common Terraform Commands
-
-| Command                | Description                                 |
-| ---------------------- | ------------------------------------------- |
-| `terraform init`       | Initialize Terraform and download providers |
-| `terraform validate`   | Check syntax and configuration              |
-| `terraform fmt`        | Format code                                 |
-| `terraform plan`       | Preview changes                             |
-| `terraform apply`      | Apply changes                               |
-| `terraform destroy`    | Delete all infrastructure                   |
-| `terraform show`       | Display current state                       |
-| `terraform output`     | Display output values                       |
-| `terraform state list` | List all resources in state                 |
-| `terraform refresh`    | Sync state with actual infrastructure       |
-
-## 🔧 Troubleshooting
-
-### Error: Backend configuration error
-
-**Cause**: S3 bucket has not been created
-**Solution**: Create S3 bucket before running `terraform init`
-
-### Error: IAM permissions
-
-**Cause**: AWS credentials lack required permissions </br>
-**Solution**: Ensure IAM user/role has sufficient permissions to create EKS, VPC, IAM resources
-
-### Error: Resource already exists
-
-**Cause**: Resource already exists outside of Terraform </br>
-**Solution**: Import resource into state or manually delete the resource
-
-### Error: Timeout when creating EKS
-
-**Cause**: VPC or networking not ready </br>
-**Solution**: Check VPC and subnets, wait for additional time

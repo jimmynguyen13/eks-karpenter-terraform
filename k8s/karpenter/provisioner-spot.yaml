@@ -1,0 +1,55 @@
+apiVersion: karpenter.sh/v1
+kind: Provisioner
+metadata:
+  name: spot
+spec:
+  requirements:
+    - key: "karpenter.sh/capacity-type"
+      operator: In
+      values: ["spot"]
+    - key: "node.kubernetes.io/instance-type"
+      operator: In
+      values: ["t3.micro", "t3.small"]
+    - key: "kubernetes.io/arch"
+      operator: In
+      values: ["amd64"]
+    - key: "kubernetes.io/os"
+      operator: In
+      values: ["linux"]
+
+  labels:
+    node-type: spot
+    workload: nodejs
+
+  taints:
+    - key: "workload"
+      value: "nodejs"
+      effect: "NoSchedule"
+
+  limits:
+    resources:
+      cpu: 1000
+
+  providerRef:
+    name: aws-spot
+
+  consolidation:
+    enabled: true
+
+  ttlSecondsAfterEmpty: 30
+
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: AWSNodeTemplate
+metadata:
+  name: aws-spot
+spec:
+  amiFamily: Bottlerocket
+  subnetSelector:
+    karpenter.sh/discovery: eks-karpenter-demo
+  securityGroupSelector:
+    karpenter.sh/discovery: eks-karpenter-demo
+  instanceProfile: karpenter-controller-eks-karpenter-demo
+  tags:
+    Name: karpenter-spot-node
+    karpenter.sh/discovery: eks-karpenter-demo
